@@ -4,7 +4,7 @@ import os
 import time
 import json
 
-from sodium import Deamon
+from libsodium import Deamon
 
 def getCurrentTime():
     localtime = time.localtime()
@@ -27,7 +27,7 @@ def createRoute(method, jconfig, name, url):
     main = open(routes+"/"+name+"/main.py", "w")
     init = open(routes+"/"+name+"/__init__.py", "w")
 
-    main.write(f"""from sodium import Route, Response
+    main.write(f"""from libsodium import Route, Response
 
 def route():
     class {name}:
@@ -111,7 +111,7 @@ if args[0] == "init":
 import json
 import importlib
 import time
-from sodium import Deamon
+from libsodium import Deamon
 # Foreground
 F_Green = "\x1b[32m"
 F_Magenta = "\x1b[35m"

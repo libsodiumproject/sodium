@@ -34,7 +34,7 @@ a username and password. Without blueprints you would have to write checks
 to ensure that the client has provided a username and password. That would
 look something like this:
 
-from sodium import Route
+from libsodium import Route
 def route():
     class signup:
         def onRequest(self, request):
@@ -50,12 +50,12 @@ With blueprints, all of the checks are automaticly accounted for, before
 you even see a request. Using the sodium cli you can create a blueprint like
 this:
 
-sodium create blueprint signupBlueprint
+python3 -m libsodium create blueprint signupBlueprint
 
 It will create a file in the src/blueprints directory, that after editing would
 look like this:
 
-from sodium import Blueprint
+from libsodium import Blueprint
 
 signupBlueprint = Blueprint([
 ('username', str),
@@ -64,7 +64,7 @@ signupBlueprint = Blueprint([
 
 Now in our updated route:
 
-from sodium import Route, useBlueprint
+from libsodium import Route, useBlueprint
 from src.blueprints import signupBlueprint
 def route():
     @useBlueprint(signupBlueprint)
