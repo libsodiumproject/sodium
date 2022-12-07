@@ -20,7 +20,7 @@ class WSGI:
                     blueprint = blueprint[0].blueprint
                     request = Request(environ)
                     if not request.mimetype in targetMimetypes:
-                        rsp = Response("<h1>Incorrect mimetype.</h1><p>Sodium v1.00</p>")
+                        rsp = Response("<h1>Incorrect mimetype.</h1><p>Sodium v1.02</p>")
                         rsp.headers['Content-Type'] = 'text/html' 
                         return rsp(environ, start_response)
                     if request.mimetype == "application/x-www-form-urlencoded":
