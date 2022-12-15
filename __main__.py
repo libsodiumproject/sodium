@@ -4,7 +4,11 @@ import os
 import time
 import json
 
-from libsodium import Deamon
+F_Green = "\x1b[32m"
+F_Cyan = "\033[0;36m"
+F_Magenta = "\x1b[35m"
+F_Red = "\x1b[31m"
+F_End = "\033[0m"
 
 def getCurrentTime():
     localtime = time.localtime()
@@ -85,7 +89,7 @@ S:::::::::::::::SS  oo:::::::::::oo   d:::::::::ddd::::di::::::i  uu::::::::uu::
  SSSSSSSSSSSSSSS      ooooooooooo      ddddddddd   dddddiiiiiiii    uuuuuuuu  uuuummmmmm   mmmmmm   mmmmmm
 """
     print("\x1b[32m"+x+"\x1b[0m")
-    print("v1.02\nMade by ahsan")
+    print("v2.00\nMade by ahsan")
     exit()
 
 if args[0] == "init":
@@ -105,6 +109,7 @@ if args[0] == "init":
     os.mkdir(prefix+"src/plugins")
     os.mkdir(prefix+"src/blueprints")
     os.mkdir(prefix+"src/utilities")
+    os.mkdir(prefix+"src/.vault")
     
     x = open(prefix+"start.py", 'w')
     x.write('''from werkzeug import run_simple
@@ -166,7 +171,7 @@ S:::::::::::::::SS  oo:::::::::::oo   d:::::::::ddd::::di::::::i  uu::::::::uu::
 
 """
 print(F_Green+x+F_End)
-print("v1.02")
+print("v2.00")
 print(f"{getCurrentTime()} [{F_Magenta}INFO{F_End}] Creating Deamon... ")
 MainDeamon = Deamon()
 print(f"{getCurrentTime()} [{F_Red}DEAMON{F_End}] Loading Mappings")
@@ -186,7 +191,7 @@ def addRoutes(app):
     x = open(prefix+"sodiumconfig.json", "w")
     x.write('''{
   "config": {
-    "version": "1.02",
+    "version": "2.00",
     "mappings": "src/mappings.py",
     "mappinglst":"src/mappings.txt",
     "plugins": "src/plugins",
@@ -253,13 +258,144 @@ if args[0] == "create":
             print("File: sodiumconfig.json is missing a 'blueprints' field. The default Blueprint location should be src/blueprints")
             exit()
         x = open(f"{blueprintLocations}/{name}Blueprint.py", 'w')
-        x.write(f"""from sodium import Blueprint
+        x.write(f"""from libsodium import Blueprint
 
 {name}Blueprint = Blueprint([
 ('example',str)
 ]) 
 """)
-
+    elif str(args[1]) == "utility":
+        if not len(args) == 3:
+            print("tool not provided")
+            exit()
+        if args[2] == "jwt":
+            contents = contents.get("config")
+            if not contents:
+                print("The sodiumconfig.json file does not have a config object. Use sodium fix config to atempt to repair the json file")
+                exit()
+            print(f"Name for the {F_Magenta}j{F_End}{F_Red}w{F_End}{F_Cyan}t{F_End} service:")
+            answer1 = input(f"{F_Green}> ")
+            print(f"{F_End}Use key maker utility(y/n)?")
+            answer2 = input(f"{F_Green}> ")
+            mod = ""
+            signer = ""
+            if not answer2 == "n" or answer2 == "N" or answer2 == "no" or answer2 == "No":
+                print(f"{F_End}Select algorithim:")
+                print(f"{F_Green}(1) DSA{F_End}")
+                print(f"{F_Red}(2) ECDSA{F_End}")
+                print(f"{F_Magenta}(3) PKCS{F_End}")
+                print(f"{F_Cyan}(4) EdDSA{F_End}")
+                answer3 = input(f"{F_Green}> ")
+                try:
+                    answer3 = int(answer3)
+                except:
+                    print(f"{F_End}{F_Red}Error:{F_End} {answer3} is not a number")
+                    exit()
+                if answer3 > 4:
+                    print(f"{F_Red}Error:{F_End} {answer3} is not an option")
+                    exit()
+                options = ["DSA", "ECDSA", "PKCS", "EdDSA"]
+                selection = options[answer3-1]
+                print(f"{F_End}Select key size:")
+                answer4 = input(f"{F_Green}> ")
+                try:
+                    answer4 = int(answer4)
+                except:
+                    print(f"{F_End}{F_Red}Error:{F_End} {answer4} is not a number")
+                    exit()
+                if selection == "DSA":
+                    from Crypto.PublicKey import DSA
+                    mod = "DSS"
+                    signer = "signer = DSS.new(key, 'fips-186-3')"
+                    key = DSA.generate(answer4)
+                    f = open(f"src/.vault/{answer1}pubkey.pem", "wb")
+                    f.write(key.publickey().export_key())
+                    f.close()
+                    f = open(f"src/.vault/{answer1}privkey.pem", "wb")
+                    f.write(key.export_key())
+                    f.close()
+                if selection == "ECDSA" or selection == "EdDSA":
+                    from Crypto.PublicKey import ECC
+                    if selection == "ECDSA":
+                        mod = "DSS"
+                        signer = "signer = DSS.new(key, 'fips-186-3')"
+                    else:
+                        mod = "eddsa"
+                        signer = "signer = eddsa.new(key, 'rfc8032')"
+                    selection = "ECC"
+                    key = ECC.generate(curve='P-256')
+                    f = open(f"src/.vault/{answer1}privkey.pem", "wt")
+                    f.write(key.export_key(format='PEM'))
+                    f.close()
+                    f = open(f"src/.vault/{answer1}pubkey.pem", "wt")
+                    f.write(key.public_key().export_key(format='PEM'))
+                if selection == "PKCS":
+                    from Crypto.PublicKey import RSA
+                    selection = "RSA"
+                    mod = "pkcs1_15"
+                    signer = "signer = pkcs1_15.new(key)"
+                    key = RSA.generate(answer4)
+                    f = open(f'src/.vault/{answer1}pubkey.pem','wb')
+                    f.write(key.publickey().export_key('PEM'))
+                    f.close()
+                    f = open(f'src/.vault/{answer1}privkey.pem','wb')
+                    f.write(key.export_key(format="PEM"))
+                    f.close()
+                f = open(f"src/utilities/{answer1}JwtLoader.py", "w")
+                f.write(f"""from Crypto.PublicKey import {selection}
+def getKeys():
+    publickey = {selection}.import_key(open('src/.vault/{answer1}pubkey.pem').read())
+    privatekey = {selection}.import_key(open('src/.vault/{answer1}privkey.pem').read())
+    return publickey, privatekey
+                    """)
+                f.close()
+            else:
+                f = open(f"src/utilities/{answer1}JwtLoader.py", "w")
+                f.write("""def getKeys():\n    pass""")
+                f.close()
+            f = open(f"src/utilities/{answer1}JwtPrinter.py", "w")
+            f.write(f"""import base64
+from .testJwtLoader import getKeys
+from Crypto.Signature import DSS
+from Crypto.Hash import SHA256
+import json
+def makeJwt(header:dict, body:dict):
+    encoded_header = str(base64.urlsafe_b64encode(json.dumps(header).encode('utf-8')), 'utf-8').strip('=')
+    encoded_body = str(base64.urlsafe_b64encode(json.dumps(body).encode('utf-8')), 'utf-8').strip('=')
+    unsigned_jwt = encoded_header + '.' + encoded_body
+    hash = SHA256.new(unsigned_jwt.encode('utf-8'))
+    key = getKeys()[1]
+    signer = DSS.new(key, 'fips-186-3') 
+    signature = base64.urlsafe_b64encode(signer.sign(hash)).decode()
+    return unsigned_jwt.strip('=') + '.' + signature.strip('=')
+""")
+            f = open(f"src/utilities/{answer1}JwtVerifier.py", "w")
+            f.write(f"""from Crypto.Hash import SHA256
+from Crypto.Signature import DSS
+from .testJwtLoader import getKeys
+import base64
+def verify(jwt):
+    jwt = jwt.split('.')
+    unsigned_jwt = jwt[0]+'.'+jwt[1]
+    h = SHA256.new(unsigned_jwt.encode())
+    print(unsigned_jwt)
+    print(h.hexdigest())
+    key = getKeys()[0] #This will get the public key
+    signature = jwt[2]+"="
+    try:
+        signature = base64.urlsafe_b64decode(signature)
+    except:
+        signature = base64.urlsafe_b64decode(signature+"=")
+    signer = DSS.new(key, 'fips-186-3')
+    try:
+        signer.verify(h, signature)
+        return True
+    except Exception as e:
+        return False""")
+            f.close()
+        else:
+            print(f"The utility {args[2]} is not creatable")
+            exit()
     else:
         print("'"+str(args[1])+"'"+" is not creatable")
 

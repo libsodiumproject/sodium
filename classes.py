@@ -1,4 +1,5 @@
 from .wsgi import WSGI
+from functools import wraps
 
 class Runtime:
     def __init__(self):
@@ -89,10 +90,22 @@ class Blueprint:
 
 def useBlueprint(b, mimetypes):
     def decorator(aclass):
+        @wraps(aclass)
         def wrapper(*args,  **kwargs):
             def blueprint(self):
                 return b, mimetypes 
             aclass.blueprint = blueprint
+            return aclass
+        return wrapper()
+    return decorator
+
+def useAuthorization(jwt, **kwargs):
+    def decorator(aclass):
+        @wraps(aclass)
+        def wrapper(*args,  **kwargs):
+            def auth(self):
+                return jwt, kwargs 
+            aclass.auth = auth
             return aclass
         return wrapper()
     return decorator
