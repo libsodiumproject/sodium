@@ -89,7 +89,7 @@ S:::::::::::::::SS  oo:::::::::::oo   d:::::::::ddd::::di::::::i  uu::::::::uu::
  SSSSSSSSSSSSSSS      ooooooooooo      ddddddddd   dddddiiiiiiii    uuuuuuuu  uuuummmmmm   mmmmmm   mmmmmm
 """
     print("\x1b[32m"+x+"\x1b[0m")
-    print("v2.00\nMade by ahsan")
+    print("v2.01\nMade by ahsan")
     exit()
 
 if args[0] == "init":
@@ -171,7 +171,7 @@ S:::::::::::::::SS  oo:::::::::::oo   d:::::::::ddd::::di::::::i  uu::::::::uu::
 
 """
 print(F_Green+x+F_End)
-print("v2.00")
+print("v2.01")
 print(f"{getCurrentTime()} [{F_Magenta}INFO{F_End}] Creating Deamon... ")
 MainDeamon = Deamon()
 print(f"{getCurrentTime()} [{F_Red}DEAMON{F_End}] Loading Mappings")
@@ -191,7 +191,7 @@ def addRoutes(app):
     x = open(prefix+"sodiumconfig.json", "w")
     x.write('''{
   "config": {
-    "version": "2.00",
+    "version": "2.01",
     "mappings": "src/mappings.py",
     "mappinglst":"src/mappings.txt",
     "plugins": "src/plugins",
@@ -356,7 +356,7 @@ def getKeys():
             f = open(f"src/utilities/{answer1}JwtPrinter.py", "w")
             f.write(f"""import base64
 from .testJwtLoader import getKeys
-from Crypto.Signature import DSS
+from Crypto.Signature import {mod}
 from Crypto.Hash import SHA256
 import json
 def makeJwt(header:dict, body:dict):
@@ -365,28 +365,26 @@ def makeJwt(header:dict, body:dict):
     unsigned_jwt = encoded_header + '.' + encoded_body
     hash = SHA256.new(unsigned_jwt.encode('utf-8'))
     key = getKeys()[1]
-    signer = DSS.new(key, 'fips-186-3') 
+    {signer}
     signature = base64.urlsafe_b64encode(signer.sign(hash)).decode()
     return unsigned_jwt.strip('=') + '.' + signature.strip('=')
 """)
             f = open(f"src/utilities/{answer1}JwtVerifier.py", "w")
             f.write(f"""from Crypto.Hash import SHA256
-from Crypto.Signature import DSS
+from Crypto.Signature import {mod}
 from .testJwtLoader import getKeys
 import base64
 def verify(jwt):
     jwt = jwt.split('.')
     unsigned_jwt = jwt[0]+'.'+jwt[1]
     h = SHA256.new(unsigned_jwt.encode())
-    print(unsigned_jwt)
-    print(h.hexdigest())
     key = getKeys()[0] #This will get the public key
     signature = jwt[2]+"="
     try:
         signature = base64.urlsafe_b64decode(signature)
     except:
         signature = base64.urlsafe_b64decode(signature+"=")
-    signer = DSS.new(key, 'fips-186-3')
+    {signer}
     try:
         signer.verify(h, signature)
         return True
