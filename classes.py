@@ -102,7 +102,7 @@ def useBlueprint(b, mimetypes):
 def useAuthorization(jwt, **kwargs):
     def decorator(aclass):
         @wraps(aclass)
-        def wrapper(*args,  **kwargs):
+        def wrapper(*args):
             def auth(self):
                 return jwt, kwargs 
             aclass.auth = auth
