@@ -1,20 +1,11 @@
-.. libsodium documentation master file, created by
-   sphinx-quickstart on Fri Dec 16 16:45:36 2022.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-Welcome to libsodium's documentation!
+Welcome to Libsodium's documentation!
 =====================================
+Libsodium aka sodium is a web framework(like django) to aid desiging and building complex API's. 
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Getting Started
 
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   rst/Installation.rst
+   rst/Quickstart.rst
+   rst/Features.rst
