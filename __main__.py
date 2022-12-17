@@ -56,8 +56,6 @@ def route():
     insert = [f"from src.routes import {name}\n", f"routelist.append({name})\n"]
     for i in maplines:
         if str(i) == "routelist = []\n":
-            print("it is made it")
-            print(insert)
             insert.insert(0, i)
         else:
             insert.append(i)
