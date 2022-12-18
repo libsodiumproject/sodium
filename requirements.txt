@@ -1,2 +1,3 @@
 werkzeug
 pycryptodome
+furo
