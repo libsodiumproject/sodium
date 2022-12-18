@@ -12,5 +12,6 @@ Windows:
 ```
 pip install libsodium
 ```
+
 # Documentation
 Read our Documentation at <a>https://libsodium.readthedocs.io/en/latest/</a>
