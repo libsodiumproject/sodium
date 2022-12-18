@@ -43,7 +43,7 @@ If you followed the steps correctly you should see something like this:
 
 .. image:: /images/sodiumstartup.png
 
-Lets begin by creating a simple **route** named "hello world" at /
+Lets begin by creating a simple **route** named "helloworld" at /
 
 For **Linux/Mac OS** Users
 
@@ -181,7 +181,9 @@ We can do this easily with the following code:
                return rsp
        return Route('POST', '/ping', ping)
 
-NOTE: The code above is not the recomended way to handle user input. Refer to the `Blueprints <Blueprints.html>`_ page for more info.
+
+.. NOTE::
+   The code above is not the recomended way to handle user input. Refer to the `Blueprints <Blueprints.html>`_ page for more info.
 
 Deploying to a WSGI server
 ==========================

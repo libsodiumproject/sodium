@@ -5,6 +5,8 @@ Features
     :hidden:
 
     Blueprints
+    JWT
 
 
-`Blueprints <Blueprints.html>`_
+#. `Blueprints <Blueprints.html>`_
+#. `JWT <JWT.html>`_

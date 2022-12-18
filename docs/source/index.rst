@@ -1,9 +1,9 @@
 Welcome to Libsodium's documentation!
 =====================================
-Libsodium aka sodium is a web framework(like django) to aid desiging and building complex API's. 
+Libsodium aka sodium is a web framework(like django) to aide building complex API's. 
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Getting Started
 
    rst/Installation.rst
