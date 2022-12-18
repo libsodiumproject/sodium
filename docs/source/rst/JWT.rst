@@ -35,18 +35,38 @@ It should look something like this:
 .. code-block:: python
 
    from src.utilities.userJwtPrinter import makeJwt
+   makeJwt({"username": "meow", "claims": ["user.post", "user.logout", "user.delete_acc"]})
 
 .. NOTE::
-   makeJwt(header: Dict, body: Dict) => str 
+   makeJwt(body: Dict) => str 
 
 
 Using the JWT Verifier
 ======================
-You can verify jwt's sodium using the **@useAuthorization** decorator.
-The decorator takes the verifier module, **not the verify function** the **module**.
-This will automaticly filter all trafic with invalid/nonexistent JWT's on the route that
-it's applied on.
+So now that we have a safe way to create jwt's, lets verify some.
+In sodium we can use the @useAuthorization(verifier) decorator to handle verification.
 
 .. NOTE::
-   You can use this decorator with other decorators, though it's best practice to put this decorator at the bottom.
-   
+   The @useAuthorization decorator takes the entire verifier module, not the verify function.
+   Provide the module that contains the function instead. It would look something like this.
+
+By default the decorator will look for an Authorization: Bearer ... 
+in the headers, but you can use cookies by adding cookie="MY COOKIE NAME" to the args.
+
+.. code-block:: python
+
+   from libsodium import Route, Response, useAuthorization
+   from src.utilities import userJwtVerifier
+
+   def route():
+       @useAuthorization(userJwtVerifier)
+       class post:
+           def onRequest(self, request):
+               create_post(request.json["post"])
+               rsp = Response(f'{"code":"success"}')
+               rsp.headers['Content-Type'] = 'applicaiton/json'
+               return rsp
+       return Route('POST', '/post', signup)
+
+.. NOTE::
+   This example is not safe, as it uses things that may be nonexistent, refer to the `Blueprints <Blueprints.html>`_ page.

@@ -275,24 +275,23 @@ if args[0] == "create":
             answer1 = input(f"{F_Green}> ")
             print(f"{F_End}Use key maker utility(y/n)?")
             answer2 = input(f"{F_Green}> ")
-            mod = ""
-            signer = ""
+            mod = ''
+            signer = ''
+            header = '{"alg":"", "typ":"jwt"}'
             if not answer2 == "n" or answer2 == "N" or answer2 == "no" or answer2 == "No":
                 print(f"{F_End}Select algorithim:")
-                print(f"{F_Green}(1) DSA{F_End}")
-                print(f"{F_Red}(2) ECDSA{F_End}")
-                print(f"{F_Magenta}(3) PKCS{F_End}")
-                print(f"{F_Cyan}(4) EdDSA{F_End}")
+                print(f"{F_Red}(1) ECDSA{F_End}")
+                print(f"{F_Magenta}(2) PKCS{F_End}")
                 answer3 = input(f"{F_Green}> ")
                 try:
                     answer3 = int(answer3)
                 except:
                     print(f"{F_End}{F_Red}Error:{F_End} {answer3} is not a number")
                     exit()
-                if answer3 > 4:
+                if answer3 > 2:
                     print(f"{F_Red}Error:{F_End} {answer3} is not an option")
                     exit()
-                options = ["DSA", "ECDSA", "PKCS", "EdDSA"]
+                options = ["ECDSA", "PKCS"]
                 selection = options[answer3-1]
                 print(f"{F_End}Select key size:")
                 answer4 = input(f"{F_Green}> ")
@@ -301,27 +300,13 @@ if args[0] == "create":
                 except:
                     print(f"{F_End}{F_Red}Error:{F_End} {answer4} is not a number")
                     exit()
-                if selection == "DSA":
-                    from Crypto.PublicKey import DSA
+                if selection == "ECDSA": 
+                    from Crypto.PublicKey import ECC
                     mod = "DSS"
                     signer = "signer = DSS.new(key, 'fips-186-3')"
-                    key = DSA.generate(answer4)
-                    f = open(f"src/.vault/{answer1}pubkey.pem", "wb")
-                    f.write(key.publickey().export_key())
-                    f.close()
-                    f = open(f"src/.vault/{answer1}privkey.pem", "wb")
-                    f.write(key.export_key())
-                    f.close()
-                if selection == "ECDSA" or selection == "EdDSA":
-                    from Crypto.PublicKey import ECC
-                    if selection == "ECDSA":
-                        mod = "DSS"
-                        signer = "signer = DSS.new(key, 'fips-186-3')"
-                    else:
-                        mod = "eddsa"
-                        signer = "signer = eddsa.new(key, 'rfc8032')"
                     selection = "ECC"
                     key = ECC.generate(curve='P-256')
+                    header = 'header = {"alg":"ES256", "typ":"jwt"}'
                     f = open(f"src/.vault/{answer1}privkey.pem", "wt")
                     f.write(key.export_key(format='PEM'))
                     f.close()
@@ -333,6 +318,7 @@ if args[0] == "create":
                     mod = "pkcs1_15"
                     signer = "signer = pkcs1_15.new(key)"
                     key = RSA.generate(answer4)
+                    header = 'header = {"alg":"ES256", "typ":"jwt"}'
                     f = open(f'src/.vault/{answer1}pubkey.pem','wb')
                     f.write(key.publickey().export_key('PEM'))
                     f.close()
@@ -357,7 +343,8 @@ from .{answer1}JwtLoader import getKeys
 from Crypto.Signature import {mod}
 from Crypto.Hash import SHA256
 import json
-def makeJwt(header:dict, body:dict):
+def makeJwt(body:dict):
+    {header}
     encoded_header = str(base64.urlsafe_b64encode(json.dumps(header).encode('utf-8')), 'utf-8').strip('=')
     encoded_body = str(base64.urlsafe_b64encode(json.dumps(body).encode('utf-8')), 'utf-8').strip('=')
     unsigned_jwt = encoded_header + '.' + encoded_body

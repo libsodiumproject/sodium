@@ -69,7 +69,7 @@ Code:
 .. code-block:: python
 
    from libsodium import Route, Response, useBlueprint
-   from src.blueprints import postBlueprint
+   from src.blueprints.postBlueprint import postBlueprint
 
    def route():
        @useBlueprint(postBlueprint, ["applicaiton/json"])
