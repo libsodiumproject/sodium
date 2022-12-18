@@ -1,5 +1,5 @@
-import ast
 from werkzeug.wrappers import Response, Request
+import re
 class WSGI:
     def __init__(self):
         self.Routes = []
@@ -62,9 +62,10 @@ class WSGI:
                 if hasattr(controler, "blueprint"):
                     blueprint = controler.blueprint()
                     targetMimetypes = blueprint[1]
-                    blueprint = blueprint[0].blueprint
+                    blueprint = blueprint[0]
+                    blueprint = blueprint.blueprint
                     if not request.mimetype in targetMimetypes:
-                        rsp = Response("<h1>Incorrect mimetype.</h1><p>Sodium v2.20</p>")
+                        rsp = Response("<h1>Incorrect mimetype.</h1><p>Sodium v2.30</p>")
                         rsp.headers['Content-Type'] = 'text/html' 
                         return rsp(environ, start_response)
                     if request.mimetype == "application/x-www-form-urlencoded":
@@ -86,13 +87,25 @@ class WSGI:
                                 rsp = Response(f"<h1>400 Bad Request</h1><p>The route requires a {name} but it was not found</p>")
                                 rsp.headers['Content-Type'] = 'text/html'
                             return rsp(environ, start_response)
-                        clientType = type(target[name]) 
+                        value = target[name]
+                        clientType = type(value)
                         if not clientType == targetType:
                             if request.mimetype == "application/json":
                                 rsp = Response('{"status_code":"400", "error":"The route requires a the ' + name + ' parameter to be the data type ' + str(targetType) + ' but the ' + str(clientType) + ' type was provided"}')                                
                                 rsp.headers['Content-Type'] = 'application/json'
                             else:
                                 rsp = Response(f"<h1>400 Bad Request</h1><p>The route requires a the {name} parameter to be the data type {targetType} but the {clientType} type was provided</p>")
+                                rsp.headers['Content-Type'] = 'text/html'
+                            return rsp(environ, start_response)
+                        regex = "."
+                        if len(rule) == 3:
+                            regex = rule[2] 
+                        if not re.search(regex, value):
+                            if request.mimetype == "application/json":
+                                rsp = Response('{"status_code":"400", "error":"The route requires a the ' + name + ' parameter to follow this regex: ' + str(regex) + '}')                                
+                                rsp.headers['Content-Type'] = 'application/json'
+                            else:
+                                rsp = Response(f"<h1>400 Bad Request</h1><p>The route requires a the {name} parameter to follow this regex {str(regex)}</p>")
                                 rsp.headers['Content-Type'] = 'text/html'
                             return rsp(environ, start_response)
 

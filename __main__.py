@@ -87,7 +87,7 @@ S:::::::::::::::SS  oo:::::::::::oo   d:::::::::ddd::::di::::::i  uu::::::::uu::
  SSSSSSSSSSSSSSS      ooooooooooo      ddddddddd   dddddiiiiiiii    uuuuuuuu  uuuummmmmm   mmmmmm   mmmmmm
 """
     print("\x1b[32m"+x+"\x1b[0m")
-    print("v2.20\nMade by ahsan")
+    print("v2.30\nMade by ahsan")
     exit()
 
 if args[0] == "init":
@@ -169,7 +169,7 @@ S:::::::::::::::SS  oo:::::::::::oo   d:::::::::ddd::::di::::::i  uu::::::::uu::
 
 """
 print(F_Green+x+F_End)
-print("v2.20")
+print("v2.30")
 print(f"{getCurrentTime()} [{F_Magenta}INFO{F_End}] Creating Deamon... ")
 MainDeamon = Deamon()
 print(f"{getCurrentTime()} [{F_Red}DEAMON{F_End}] Loading Mappings")
@@ -189,7 +189,7 @@ def addRoutes(app):
     x = open(prefix+"sodiumconfig.json", "w")
     x.write('''{
   "config": {
-    "version": "2.20",
+    "version": "2.30",
     "mappings": "src/mappings.py",
     "mappinglst":"src/mappings.txt",
     "plugins": "src/plugins",

@@ -1,4 +1,4 @@
-# Sodium v2.20
+# Sodium v2.30
 [![Documentation Status](https://readthedocs.org/projects/libsodium/badge/?version=latest)](https://libsodium.readthedocs.io/en/latest/?badge=latest)
 [![PyPI version](https://badge.fury.io/py/libsodium.svg)](https://badge.fury.io/py/libsodium/)
 

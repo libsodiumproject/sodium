@@ -79,13 +79,16 @@ In the sinario above it doesn't save alot of time, but as your requests get
 bigger, the benifits of blueprinting become clear.
 """
 class Blueprint:
-    def __init__(self, blueprint:list):
+    def __init__(self, blueprint:list, **kwargs):
         for i in blueprint:
             if not isinstance(i, tuple) and not isinstance(i, list):
                 return "The blueprint provided had a rule that was not a tuple/array."
-            if not len(i) == 2:
+            if len(i) > 3:
                 return "The blueprint provided contained a rule that had more than two elements."
         self.blueprint = blueprint
+        regex = kwargs.get("regex")
+        if regex:
+            self.regex = regex
 
 
 def useBlueprint(b, mimetypes):
