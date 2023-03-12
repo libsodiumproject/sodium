@@ -14,7 +14,7 @@ class Route:
         self.controler = controler
 
 class Deamon(WSGI):
-    def addRoute(self, route:Route):
+    def addRoute(self, route: Route):
         self.Routes.append(route)
 
     def addRoutes(self, routes):
@@ -23,6 +23,7 @@ class Deamon(WSGI):
                 self.Routes.append(i)
         except:
             raise Exception("Error while processing routes. Function 'addRoutes' requires data in format List[Route]. The format specified was not a list. You may have ment to use the Function 'addRoute' instead")
+        self.onMount()
 
 """
 Blueprint API:

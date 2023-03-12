@@ -1,19 +1,21 @@
 from werkzeug.wrappers import Response, Request
 import re
+from routes import Mapper
 class WSGI:
     def __init__(self):
         self.Routes = []
         self.Config = {}
+        self.map = Mapper()
     def wsgi_handler(self, environ, start_response):
         path = environ.get('PATH_INFO')
         for route in self.Routes:
-            if route.route().url == path:
-                if not route.route().method == environ['REQUEST_METHOD']: 
+            if self.map.match(path):
+                if not route.method == environ['REQUEST_METHOD']: 
                     rsp = Response("<h1>405 Method Not Allowed</h1>")
                     rsp.status_code = 405
                     rsp.headers['Content-Type'] = 'text/html'
                     return rsp(environ, start_response)
-                controler = route.route().controler()
+                controler = route.controler()
                 request = Request(environ)
                 if hasattr(controler, "auth"):
                     auth = controler.auth()
@@ -65,7 +67,7 @@ class WSGI:
                     blueprint = blueprint[0]
                     blueprint = blueprint.blueprint
                     if not request.mimetype in targetMimetypes:
-                        rsp = Response("<h1>Incorrect mimetype.</h1><p>Sodium v2.30</p>")
+                        rsp = Response("<h1>Incorrect mimetype.</h1><p>Sodium v2.40</p>")
                         rsp.headers['Content-Type'] = 'text/html' 
                         return rsp(environ, start_response)
                     if request.mimetype == "application/x-www-form-urlencoded":
@@ -115,9 +117,19 @@ class WSGI:
                 if not isinstance(rsp, Response):
                     rsp = Response(rsp) 
                 return rsp(environ, start_response)
+            
         rsp = Response("<h1>404 Not Found</h1>")
         rsp.status_code = 404
         rsp.headers['Content-Type'] = 'text/html'
         return rsp(environ, start_response)
+
+    def onMount(self):
+        temp = []
+        for route in self.Routes:
+            rt = route.route()
+            temp.append(rt)
+            self.map.connect(None, rt.url)
+        self.Routes = temp
+
     def __call__(self, environ, start_response):
         return self.wsgi_handler(environ, start_response)

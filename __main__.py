@@ -19,6 +19,7 @@ def createRoute(method, jconfig, name, url):
     config = jconfig.get("config")
     if not config:
         print("'sodiumconfig.json' does not contain a config object.")
+        exit()
     routes = config.get("routes")
 
     if not routes:
@@ -30,6 +31,9 @@ def createRoute(method, jconfig, name, url):
     os.mkdir(routes+"/"+name)
     main = open(routes+"/"+name+"/main.py", "w")
     init = open(routes+"/"+name+"/__init__.py", "w")
+    x = open(".sodium", "w")
+    x.write(os.getcwd())
+    x.close()
 
     main.write(f"""from libsodium import Route, Response
 
@@ -87,7 +91,7 @@ S:::::::::::::::SS  oo:::::::::::oo   d:::::::::ddd::::di::::::i  uu::::::::uu::
  SSSSSSSSSSSSSSS      ooooooooooo      ddddddddd   dddddiiiiiiii    uuuuuuuu  uuuummmmmm   mmmmmm   mmmmmm
 """
     print("\x1b[32m"+x+"\x1b[0m")
-    print("v2.30\nMade by ahsan")
+    print("v2.40\nMade by ahsan")
     exit()
 
 if args[0] == "init":
@@ -107,8 +111,38 @@ if args[0] == "init":
     os.mkdir(prefix+"src/plugins")
     os.mkdir(prefix+"src/blueprints")
     os.mkdir(prefix+"src/utilities")
+    os.mkdir(prefix+"src/models")
     os.mkdir(prefix+"src/.vault")
     
+    x = open(prefix+"src/.sodium", "w")
+    x.write(os.getcwd()+f"/{project_name}")
+    x.close()
+
+    x = open(prefix+"src/routes/.sodium", "w")
+    x.write(os.getcwd()+f"/{project_name}")
+    x.close()
+
+    x = open(prefix+"src/plugins/.sodium", "w")
+    x.write(os.getcwd()+f"/{project_name}")
+    x.close()
+
+    x = open(prefix+"src/blueprints/.sodium", "w")
+    x.write(os.getcwd()+f"/{project_name}")
+    x.close()
+
+    x = open(prefix+"src/utilities/.sodium", "w")
+    x.write(os.getcwd()+f"/{project_name}")
+    x.close()
+
+    x = open(prefix+"src/models/.sodium", "w")
+    x.write(os.getcwd()+f"/{project_name}")
+    x.close()
+
+    x = open(prefix+"src/.vault/.sodium", "w")
+    x.write(os.getcwd()+f"/{project_name}")
+    x.close()
+
+
     x = open(prefix+"start.py", 'w')
     x.write('''from werkzeug import run_simple
 import json
@@ -169,7 +203,7 @@ S:::::::::::::::SS  oo:::::::::::oo   d:::::::::ddd::::di::::::i  uu::::::::uu::
 
 """
 print(F_Green+x+F_End)
-print("v2.30")
+print("v2.40")
 print(f"{getCurrentTime()} [{F_Magenta}INFO{F_End}] Creating Deamon... ")
 MainDeamon = Deamon()
 print(f"{getCurrentTime()} [{F_Red}DEAMON{F_End}] Loading Mappings")
@@ -189,18 +223,40 @@ def addRoutes(app):
     x = open(prefix+"sodiumconfig.json", "w")
     x.write('''{
   "config": {
-    "version": "2.30",
+    "version": "2.40",
     "mappings": "src/mappings.py",
     "mappinglst":"src/mappings.txt",
     "plugins": "src/plugins",
     "routes": "src/routes",
     "intp": "''' + interpreter + '''",
     "blueprints": "src/blueprints",
+    "models":"src/models",
     "utilities":"src/utilities"
   },
   "scripts": {}
 }''')
     x.close()
+    x = open(prefix+"src/models/dev.db", "w")
+    x.close()
+    x = open(prefix+"src/models/config.py", "w")
+    x.write('''from libsodium.db import connection
+Connection = connection("sqlite:///dev.db", echo=False)
+#Connection.Engine - The engine
+#Connection.Session - The session connected to the db''')
+    x.close()
+    x = open(prefix+"src/models/base.py", "w")
+    x.write("""from sqlalchemy.ext.declarative import declarative_base
+Base = declarative_base()
+
+def createModels():
+    import config
+    from os import listdir
+    from os.path import isfile
+    files = [f for f in listdir() if isfile(f) and f.endswith(".py")]
+    for file in files:
+        if not file == "base.py" and not file == "config.py":
+            b = __import__(file.strip('.py'))
+    Base.metadata.create_all(config.Connection.Engine)""")
     exit()
 if args[0] == "create":
     if len(args) < 2:
@@ -211,9 +267,18 @@ if args[0] == "create":
         contents = dict(json.load(config))
         config.close()
     except FileNotFoundError:
-        print("\033[91m\033[1mError code 0: \033[0m")
-        print("File: 'sodiumconfig.json' not found")
-        exit()
+        try:
+            x = open(".sodium", "r")
+            xc = x.read()
+            x.close()
+            os.chdir(xc.strip("\n"))
+            config = open("sodiumconfig.json", "r+")
+            contents = dict(json.load(config))
+            config.close()
+        except FileNotFoundError as e:
+            print("\033[91m\033[1mError code 0: \033[0m")
+            print("File: 'sodiumconfig.json' not found")
+            exit()
     except:
         print("\033[91m\033[1mError code 1: \033[0m")
         print("File: 'sodiumconfig.json' has improper json")
@@ -262,6 +327,26 @@ if args[0] == "create":
 ('example',str)
 ]) 
 """)
+    elif str(args[1]) == "model":
+        if not len(args) == 3:
+            print("Name not provided")
+            exit()
+        contents = contents.get("config")
+        if not contents:
+            print("The sodiumconfig.json file does not have a config object. Use sodium fix config to atempt to repair the json file")
+            exit()
+        models = contents.get("models")
+        if not models:
+            print("File: sodiumconfig.json is missing a 'models' field. The default Blueprint location should be src/blueprints")
+            exit()
+        x = open(f"{models}/{args[2]}.py", "w")
+        x.write(f'''from base import Base
+from libsodium.db import Column, Integer
+
+class {args[2]}(Base):
+    __tablename__ = "{args[2]}"
+    id = Column(Integer, primary_key=True)
+''')
     elif str(args[1]) == "utility":
         if not len(args) == 3:
             print("tool not provided")
@@ -271,6 +356,9 @@ if args[0] == "create":
             if not contents:
                 print("The sodiumconfig.json file does not have a config object. Use sodium fix config to atempt to repair the json file")
                 exit()
+            utildir = contents.get("utilities")
+            if not utildir:
+                print("The sodiumconfig.json file does not conain a 'utilities' field")
             print(f"Name for the {F_Magenta}j{F_End}{F_Red}w{F_End}{F_Cyan}t{F_End} service:")
             answer1 = input(f"{F_Green}> ")
             print(f"{F_End}Use key maker utility(y/n)?")
@@ -325,7 +413,7 @@ if args[0] == "create":
                     f = open(f'src/.vault/{answer1}privkey.pem','wb')
                     f.write(key.export_key(format="PEM"))
                     f.close()
-                f = open(f"src/utilities/{answer1}JwtLoader.py", "w")
+                f = open(f"{utildir}/{answer1}JwtLoader.py", "w")
                 f.write(f"""from Crypto.PublicKey import {selection}
 def getKeys():
     publickey = {selection}.import_key(open('src/.vault/{answer1}pubkey.pem').read())
@@ -334,7 +422,7 @@ def getKeys():
                     """)
                 f.close()
             else:
-                f = open(f"src/utilities/{answer1}JwtLoader.py", "w")
+                f = open(f"{utildir}/{answer1}JwtLoader.py", "w")
                 f.write("""def getKeys():\n    pass""")
                 f.close()
             f = open(f"src/utilities/{answer1}JwtPrinter.py", "w")
