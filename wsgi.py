@@ -6,10 +6,11 @@ class WSGI:
         self.Routes = []
         self.Config = {}
         self.map = Mapper()
+
     def wsgi_handler(self, environ, start_response):
         path = environ.get('PATH_INFO')
         for route in self.Routes:
-            if self.map.match(path):
+            if not self.map.match(path) == None:
                 if not route.method == environ['REQUEST_METHOD']: 
                     rsp = Response("<h1>405 Method Not Allowed</h1>")
                     rsp.status_code = 405
