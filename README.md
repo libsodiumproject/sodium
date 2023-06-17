@@ -4,7 +4,7 @@
 
 Sodium is a WSGI web framework(like django) that is built for creating API's.
 # Instalation
-Linux/MacOS:
+Linux/Mac OS:
 ```
 pip3 install libsodium
 ```
