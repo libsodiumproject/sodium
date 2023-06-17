@@ -26,19 +26,26 @@ This will launch the jwt service maker, and will promt you to use the key maker 
 .. NOTE::
     When using ECDSA, please note that the ammount of bits means nothing and can be any positive integer
 
-Using the JWT Printer
+Using the JWT Factory
 =====================
 After you create a jwt service utility, we can start to use JWT's.
-To create JWT's simply import the makeJwt function from src.utilities.{name of the service}JwtPrinter
+To create JWT's simply import the userJwtFactory class from 
+src.utilities.{name of the service}JwtFactory
 It should look something like this:
 
 .. code-block:: python
 
-   from src.utilities.userJwtPrinter import makeJwt
-   makeJwt({"username": "meow", "claims": ["user.post", "user.logout", "user.delete_acc"]})
+   from src.utilities.userJwtFactory import userJwtFactory
+   from libsodium import seconds
+   myfactory = userJwtFactory()
+   jwt = myfactory.generateJWT(
+    {"this_is_optional":1234},
+    scopes=["user.post", "user.logout", "user.delete_acc"],
+    sub="12345",
+    exp=seconds(60*60*24*30))
 
 .. NOTE::
-   makeJwt(body: Dict) => str 
+   makeJwt(payload={}, \**kwargs) => str 
 
 
 Using the JWT Verifier
@@ -56,10 +63,10 @@ in the headers, but you can use cookies by adding cookie="MY COOKIE NAME" to the
 .. code-block:: python
 
    from libsodium import Route, Response, useAuthorization
-   from src.utilities import userJwtVerifier
+   from src.utilities.userJwtVerifier import userJwtVerifier
 
    def route():
-       @useAuthorization(userJwtVerifier)
+       @useAuthorization(userJwtVerifier())
        class post:
            def onRequest(self, request):
                create_post(request.json["post"])

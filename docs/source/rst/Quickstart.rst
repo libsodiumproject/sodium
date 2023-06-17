@@ -188,4 +188,11 @@ We can do this easily with the following code:
 Deploying to a WSGI server
 ==========================
 To deploy to a WSGI server, go into your project directory and then open the start.py file.
-At the bottom delete the line, and using your WSGI adapter of choise, use the "Main Deamon" object. 
+The varible "MainDeamon" is the WSGI app that you can use. Normaly this is ran by the 
+eventlet server but can be ported over to any WSGI server
+
+.. note:: 
+   Be varry that if you use the `SocketIO API <Websockets.html>`_ you must use a server 
+   that is compatible, check out the 
+   `Python SocketIO Documentation <https://python-socketio.readthedocs.io/en/latest/intro.html#server-features>`_
+   for more info
