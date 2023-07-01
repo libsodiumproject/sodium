@@ -77,3 +77,14 @@ our proto file. Here is the fully completed version of the file.
 
    The sonora library only supports HTTP 1.1 as of libsodium version 2.50.
 
+
+Regeneration
+============
+
+If you edit a proto file and wish for the gRPC files to be regenerated use the following command:
+
+.. code-block:: sh
+
+   python3 -m libsodium create gRPC example.proto --regen
+
+
