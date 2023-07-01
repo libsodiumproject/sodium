@@ -9,7 +9,7 @@
 project = 'libsodium'
 copyright = '2023, Ahsan Ahmed'
 author = 'Ahsan Ahmed'
-release = 'v2.51'
+release = 'v2.50'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
