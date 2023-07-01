@@ -5,5 +5,4 @@ from .classes import Blueprint
 from .classes import useBlueprint
 from .classes import useAuthorization 
 from .utils import seconds
-from .utils import render
 from werkzeug import Response
