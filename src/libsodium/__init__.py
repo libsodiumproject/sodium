@@ -6,3 +6,4 @@ from .classes import useBlueprint
 from .classes import useAuthorization 
 from .utils import seconds
 from werkzeug import Response
+from .utils import render
