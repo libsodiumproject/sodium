@@ -595,7 +595,7 @@ class {answer1}JwtVerifier:
             print(f"The utility {args[2]} is not creatable")
             exit()
     elif args[1] == "gRPC":
-        if not len(args) == 3:
+        if not len(args) >= 3:
             print("Invalid amount of arugments please check out the code below\npython3 -m libsodium create gRPC example.proto")
             exit(1)
         try:
@@ -635,8 +635,12 @@ class {answer1}JwtVerifier:
 
         if not exit_code == 0:
             print("Process is shutting down")
-            os.rmdir(f"src/gRPC/{args[2][:len(args[2])-6]}")
+            if not args[3] == "--regen":
+                os.rmdir(f"src/gRPC/{args[2][:len(args[2])-6]}")
             exit(1)
+
+        if args[3] == "--regen":
+            exit()
 
         f = open(f"src/gRPC/{args[2][:len(args[2])-6]}/{args[2][:len(args[2])-6]}.py", "w")
         f.write(f"""import src.gRPC.{args[2][:len(args[2])-6]}.{args[2][:len(args[2])-6]}_pb2_grpc as {args[2][:len(args[2])-6]}_pb2_grpc 
