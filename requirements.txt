@@ -8,4 +8,4 @@ websockets
 sonora
 grpcio
 grpcio-tools
-jinja
+Jinja2
