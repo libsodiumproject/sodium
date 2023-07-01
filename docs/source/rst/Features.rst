@@ -9,7 +9,6 @@ Features
     DB
     Websockets
     gRPC
-    Utilities
 
 
 #. `Blueprints <Blueprints.html>`_
@@ -17,4 +16,3 @@ Features
 #. `ORM/DB <DB.html>`_
 #. `SocketIO And Websockets <Websockets.html>`_
 #. `gRPC with Sonora <gRPC.html>`_
-#. `Utilites <Utilities.html>`_
