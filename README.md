@@ -1,4 +1,4 @@
-# Sodium v2.52
+# Sodium v2.60
 [![Documentation Status](https://readthedocs.org/projects/libsodium/badge/?version=latest)](https://libsodium.readthedocs.io/en/latest/?badge=latest)
 ![PyPI](https://img.shields.io/pypi/v/libsodium)
 
