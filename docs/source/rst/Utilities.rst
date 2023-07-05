@@ -1,8 +1,10 @@
 Helper Utilities:
+=================
 
 .. note:: 
 
    .. code-block:: python3
+
       def libsodium.utils.render(templatename, **kwargs):
       
    
@@ -14,7 +16,9 @@ Helper Utilities:
 .. note:: 
 
    .. code-block:: python3
+
       def libsodium.utils.seconds(time):
+
    Adds the ammount of seconds too the current time to create an
    expiration date.
 

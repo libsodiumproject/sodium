@@ -28,36 +28,60 @@ For **Windows** users:
 
    python -m libsodium create blueprint signup
 
-.. NOTE::
+.. note::
    The name of the blueprint dosn't have to be the name of the route, though it's **best practice**.
 
 
 Now that we have created our blueprint, lets take a peek inside:
 
-**/src/blueprints/signupBlueprint.py:**
+**file: /src/blueprints/signupBlueprint.py:**
 
-.. code-block:: python
+.. code-block:: python3
 
-   from libsodium import Blueprint
+   from libsodium import Rule 
 
-   signupBlueprint = Blueprint([
-   ('example',str)
-   ])
+   class signupBlueprint:
+       name = Rule(str, "<regex>")
 
-Basicly the tuple is called a rule, and the list is the list of rules.
-For our usecase it should look something like this:
+.. note:: 
+   Alternitive syntax(**Not Recomended**):
 
-.. code-block:: python
+   .. code-block:: python3
 
-   from libsodium import Blueprint
+      from libsodium import Blueprint
 
-   signupBlueprint = Blueprint([
-   ('username', str)
-   ('email', str, r"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"+'"'+"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*"+'"'+")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])")
-   ('password', str)  
-   ])
+      signupBlueprint = Blueprint([
+      ('example', str, "<regex>")
+      ])
 
-.. NOTE::
+Long story short, the Rule object contains the datatype and the regex which we can put into class varibles.
+
+Example of using regex's
+
+.. code-block:: python3
+
+   from libsodium import Rule 
+
+   class signupBlueprint:
+        username = Rule(str)
+        email = Rule(str, r"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"+'"'+"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*"+'"'+")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])")
+        password = Rule(str)  
+
+
+.. note:: 
+   Alternative syntax(**Not Recomended**):
+
+   .. code-block:: python3
+
+      from libsodium import Blueprint
+
+      signupBlueprint = Blueprint([
+      ('username', str)
+      ('email', str, r"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"+'"'+"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*"+'"'+")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])")
+      ('password', str)  
+      ]) 
+
+.. note::
    The regex used for the email can be found `here <https://www.emailregex.com/>`_
 
 Using The Blueprint
