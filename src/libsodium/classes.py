@@ -31,7 +31,7 @@ class Deamon(WSGI):
         self.onMount()
 
 """
-Blueprint API:
+Blueprint API(v1):
 Blueprints allow you to filter content that comes from the client. This
 allows you to allways expect your data in a format you define. For
 example, lets say you had a POST route under /signup. Instead of writing
@@ -88,14 +88,17 @@ class Blueprint:
     def __init__(self, blueprint:list, **kwargs):
         for i in blueprint:
             if not isinstance(i, tuple) and not isinstance(i, list):
-                return "The blueprint provided had a rule that was not a tuple/array."
+                raise Exception("The blueprint provided had a rule that was not a tuple/array.")
             if len(i) > 3:
-                return "The blueprint provided contained a rule that had more than two elements."
+                print(i)
+                raise Exception("The blueprint provided contained a rule that had more than three elements.")
         self.blueprint = blueprint
-        regex = kwargs.get("regex")
-        if regex:
-            self.regex = regex
 
+class Rule:
+    def __init__(self, typ, regex=".", **kwargs) -> None:
+        self.regex = regex
+        self.typ = typ
+        
 
 def useBlueprint(b, mimetypes):
     def decorator(aclass):

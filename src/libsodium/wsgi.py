@@ -99,9 +99,29 @@ class WSGI:
                     return rsp(environ, start_response)
 
             if hasattr(controler, "blueprint"):
+                from .classes import Blueprint
                 blueprint = controler.blueprint()
                 targetMimetypes = blueprint[1]
                 blueprint = blueprint[0]
+                #If reached, the blueprint was created using the class syntax
+                if not type(blueprint) == Blueprint:
+                    #Filter out everything but class varibles
+                    classattrs = dir(blueprint)
+                    names = []
+                    for i in classattrs:
+                        if not i.startswith("__"):
+                            names.append(i)
+                    #Get The Values
+                    values = []
+                    for i in names:
+                        values.append(eval(f"blueprint.{i}"))
+
+                    #Convert to a normal blueprint
+                    rules = []
+                    for name, value in zip(names, values):
+                        rules.append((name, value.typ, value.regex))
+                    blueprint = Blueprint(rules)
+
                 blueprint = blueprint.blueprint
                 if not request.mimetype in targetMimetypes:
                     rsp = Response("<h1>Incorrect mimetype.</h1><p>Sodium v2.60</p>")
