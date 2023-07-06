@@ -184,7 +184,7 @@ if __name__ == "__main__":
     from concurrent import futures
     addAll(grpc.server(futures.ThreadPoolExecutor(max_workers=10)))""")
 
-    os.mkdir("src/templates")
+    os.mkdir(prefix+"src/templates")
     x = open(prefix+"src/templates/.sodium", "w")
     x.write(os.getcwd()+f"/{project_name}")
     x.close()
