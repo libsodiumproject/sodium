@@ -93,7 +93,7 @@ S:::::::::::::::SS  oo:::::::::::oo   d:::::::::ddd::::di::::::i  uu::::::::uu::
  SSSSSSSSSSSSSSS      ooooooooooo      ddddddddd   dddddiiiiiiii    uuuuuuuu  uuuummmmmm   mmmmmm   mmmmmm
 """
     print("\x1b[32m"+x+"\x1b[0m")
-    print("v2.70\nMade by ahsan")
+    print("v2.61\nMade by ahsan")
     exit()
 
 if args[0] == "init":
@@ -256,7 +256,7 @@ S:::::::::::::::SS  oo:::::::::::oo   d:::::::::ddd::::di::::::i  uu::::::::uu::
 
     """
     print(F_Green+x+F_End)
-    print("v2.70")
+    print("v2.61")
     print(f"{getCurrentTime()} [{F_Magenta}INFO{F_End}] Creating Deamon... ")
     MainDeamon = Deamon()
 
