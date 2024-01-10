@@ -256,7 +256,7 @@ S:::::::::::::::SS  oo:::::::::::oo   d:::::::::ddd::::di::::::i  uu::::::::uu::
 
     """
     print(F_Green+x+F_End)
-    print(v2.70)
+    print("v2.70")
     print(f"{getCurrentTime()} [{F_Magenta}INFO{F_End}] Creating Deamon... ")
     MainDeamon = Deamon()
 
