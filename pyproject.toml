@@ -26,8 +26,5 @@ classifiers = ["Programming Language", "Python", "3",
 Docs = "https://libsodium.readthedocs.io/en/latest/"
 Github = "https://github.com/libsodiumproject/sodium/"
 
-[options]
-package_dir = "src"
-packages = "find:" 
 
 python_requires = ">=3.6"
