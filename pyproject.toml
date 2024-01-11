@@ -15,7 +15,7 @@ version = "2.7.4"
 python_requires = ">=3.6"
 description = "A simple web framework"
 readme = "file: README.md"
-authors = {name = "Ahsan Ahmed", email = "ahsan.ahmed3246@gmail.com"}
+authors = [{name = "Ahsan Ahmed", email = "ahsan.ahmed3246@gmail.com"}]
 classifiers = ["Programming Language", "Python", "3",
     "License", "OSI Approved", "MIT License",
     "Operating System", "OS Independent"]
