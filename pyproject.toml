@@ -24,6 +24,7 @@ classifiers = ["Programming Language", "Python", "3",
 
 [project.urls]
 Docs = "https://libsodium.readthedocs.io/en/latest/"
+Github = "https://github.com/libsodiumproject/sodium/"
 
 [options]
 package_dir = "src"
