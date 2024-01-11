@@ -5,15 +5,17 @@ requires = [
 ]
 build-backend = "setuptools.build_meta"
 
+[metadata]
+author = "Ahsan Ahmed" 
+author_email = "ahsan.ahmed3246@gmail.com"
+url = "https://libsodium.readthedocs.io/en/latest/"
+
 [project]
 dependencies = ["werkzeug", "pycryptodome", "furo", "Routes", "python-socketio", "eventlet", "websockets", "sonora", "grpcio", "grpcio-tools", "Jinja2"]
 name = "libsodium"
 version = "2.7.4"
-author = "Ahsan Ahmed" 
-author_email = "ahsan.ahmed3246@gmail.com"
 description = "A simple web framework"
 readme = "file: README.md"
-url = "https://libsodium.readthedocs.io/en/latest/"
 classifiers = ["Programming Language", "Python", "3",
     "License", "OSI Approved", "MIT License",
     "Operating System", "OS Independent"]
