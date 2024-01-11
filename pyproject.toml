@@ -10,7 +10,7 @@ dependencies = ["werkzeug", "pycryptodome", "furo", "Routes", "python-socketio",
 
 [metadata]
 name = libsodium
-version = 2.7.3
+version = 2.7.4
 author = Ahsan Ahmed 
 author_email = ahsan.ahmed3246@gmail.com
 description = A simple web framework
