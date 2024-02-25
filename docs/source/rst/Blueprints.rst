@@ -1,20 +1,20 @@
 Blueprints
 ==========
-Imagine you have a route, lets say /signup. That route requires 3 things username, email, and password.
-Now we will asume you can save the user to the database by running the create_user(username, email, password).
-This may seem simple, but this is where complicatons arise. The problem is that you need to get them user input.
-Now without any special tools, you would have to check if the user provided a username and a email and a password.
-It's common knolage among developers to follow the Don't Repeat Yourself(DRY) design pateren and all of these checks
+Imagine you have a route, let's say /signup. That route requires 3 things username, email, and password.
+Now we assume you can save the user to the database by running the create_user(username, email, password).
+This may seem simple, but this is where complications arise. The problem is that you need to get their user input.
+Now, without any special tools, you would have to check if the user provided a username, email, and password.
+It's common knowledge among developers to follow the Don't Repeat Yourself(DRY) design pattern and all of these checks
 violate these rules.
 
-What The Hell Is A Blueprint?
+What The Heck Is A Blueprint?
 =============================
-A blueprint will alow yourself to always get the request in the format **you** define, and handles all the checks for
+A blueprint will allow you always to get the request in the format **you** define, and handle all the checks for
 you.
 
 How to create Blueprints
 ========================
-Ok, enough of the lame design paterens and theory, lets actualy use it.
+Below are the simple instructions to use the CLI wizard to make the template for a blueprint.
 
 For **Linux or Mac OS** users:
 
@@ -29,10 +29,10 @@ For **Windows** users:
    python -m libsodium create blueprint signup
 
 .. note::
-   The name of the blueprint dosn't have to be the name of the route, though it's **best practice**.
+   The name of the blueprint doesn't have to be the name of the route, though it's **best practice**.
 
 
-Now that we have created our blueprint, lets take a peek inside:
+Now that we have created our blueprint, let's take a peek inside:
 
 **file: /src/blueprints/signupBlueprint.py:**
 
@@ -44,7 +44,7 @@ Now that we have created our blueprint, lets take a peek inside:
        name = Rule(str, "<regex>")
 
 .. note:: 
-   Alternitive syntax(**Not Recomended**):
+   Alternative syntax(**Not Recommended**):
 
    .. code-block:: python3
 
@@ -54,7 +54,7 @@ Now that we have created our blueprint, lets take a peek inside:
       ('example', str, "<regex>")
       ])
 
-Long story short, the Rule object contains the datatype and the regex which we can put into class varibles.
+Long story short, the Rule object contains the datatype and the regex which we can put into class variables.
 
 Example of using regex's
 
@@ -69,7 +69,7 @@ Example of using regex's
 
 
 .. note:: 
-   Alternative syntax(**Not Recomended**):
+   Alternative syntax(**Not Recommended**):
 
    .. code-block:: python3
 
@@ -86,7 +86,7 @@ Example of using regex's
 
 Using The Blueprint
 ===================
-Now lets add the blueprint to our route. We can do this by using the useBlueprint decorator.
+Now let's add the blueprint to our route. We can do this by using the useBlueprint decorator.
 
 .. NOTE::
    **libsodium.classes.useBlueprint(Blueprint blueprint, List[str,..] mimetypes)**

@@ -1,6 +1,46 @@
 [build-system]
 requires = [
-    "setuptools>=42",
-    "wheel"
+    "setuptools",
+    "setuptools-scm"
 ]
 build-backend = "setuptools.build_meta"
+
+[metadata]
+url = "https://libsodium.readthedocs.io/en/latest/"
+
+[project]
+dependencies = ["werkzeug", "pycryptodome", "furo", "Routes", "python-socketio", "eventlet", "websockets", "sonora", "grpcio", "grpcio-tools", "Jinja2"]
+name = "libsodium"
+version = "2.7.4"
+requires-python = ">3.9"
+description = "A simple web framework"
+readme = "file: README.md"
+authors = [{name = "Ahsan Ahmed", email = "ahsan.ahmed3246@gmail.com"}]
+classifiers = [
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python",
+    "Topic :: Internet",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development",
+    "Typing :: Typed",
+    "Development Status :: 4 - Beta",
+    "Environment :: Web Environment",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
+    "Topic :: Internet :: WWW/HTTP",
+]
+
+[project.urls]
+Docs = "https://libsodium.readthedocs.io/en/latest/"
+Github = "https://github.com/libsodiumproject/sodium/"
