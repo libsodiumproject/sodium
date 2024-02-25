@@ -562,7 +562,7 @@ class {answer1}JwtFactory:
             f.write(f"""from Crypto.Hash import SHA256
 from Crypto.Signature import {mod}
 from .{answer1}JwtImporter import {answer1}JwtImporter
-import base64
+import base64, json, time
 
 class {answer1}JwtVerifier:
     def __init__(self) -> None:
@@ -573,7 +573,7 @@ class {answer1}JwtVerifier:
         jwt = jwt.split('.')
         unsigned_jwt = jwt[0]+'.'+jwt[1]
         try:
-            if int(json.loads(unsigned_jwt)['exp']) < time.time():
+            if int(json.loads(base64.urlsafe_b64decode(jwt[1]+"=="))["exp"]) < time.time():
                 return False
         except:
             pass
