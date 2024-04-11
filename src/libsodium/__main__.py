@@ -406,11 +406,9 @@ if args[0] == "create":
             print("File: sodiumconfig.json is missing a 'blueprints' field. The default Blueprint location should be src/blueprints")
             exit()
         x = open(f"{blueprintLocations}/{name}Blueprint.py", 'w')
-        x.write(f"""from libsodium import Blueprint
-
-{name}Blueprint = Blueprint([
-('example',str)
-]) 
+        x.write(f"""from libsodium import Rule 
+class {name}Blueprint:
+    example_rule = Rule(str) 
 """)
     elif str(args[1]) == "model":
         if not len(args) == 3:
@@ -562,7 +560,7 @@ class {answer1}JwtFactory:
             f.write(f"""from Crypto.Hash import SHA256
 from Crypto.Signature import {mod}
 from .{answer1}JwtImporter import {answer1}JwtImporter
-import base64
+import base64, json, time
 
 class {answer1}JwtVerifier:
     def __init__(self) -> None:
@@ -573,7 +571,7 @@ class {answer1}JwtVerifier:
         jwt = jwt.split('.')
         unsigned_jwt = jwt[0]+'.'+jwt[1]
         try:
-            if int(json.loads(unsigned_jwt)['exp']) < time.time():
+            if int(json.loads(base64.urlsafe_b64decode(jwt[1]+"=="))["exp"]) < time.time():
                 return False
         except:
             pass

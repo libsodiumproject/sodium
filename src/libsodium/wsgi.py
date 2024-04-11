@@ -14,13 +14,16 @@ class WSGI:
     def __init__(self):
         self.Routes = []
         self.Config = {}
-        self._secondary_map = {}
         self.map = Mapper()
+        self.secondary_map = {}
 
     def wsgi_handler(self, environ, start_response):
         path = environ.get('PATH_INFO')
         if self.map.match(path):
-            route = self._secondary_map[self.map.match(path).get("controler")]
+            route = self.secondary_map[self.map.match(path)["controler"]]
+            params = dict(self.map.match(path))
+            del params["controler"]
+            print(list(params.values()))
             if not route.method == environ['REQUEST_METHOD']: 
                 rsp = Response("<h1>405 Method Not Allowed</h1>")
                 rsp.status_code = 405
@@ -92,7 +95,7 @@ class WSGI:
                                     return rsp(environ, start_response)
 
 
-                    rsp = controler.onRequest(request)
+                    rsp = controler.onRequest(request, *list(params.values()))
                 else:
                     rsp = Response('{"error":"Invalid Jwt"}', status=403)
                     rsp.headers['Content-Type'] = "application/json"
@@ -116,10 +119,10 @@ class WSGI:
                     for i in names:
                         values.append(eval(f"blueprint.{i}"))
 
-                    #Convert to a normal blueprint
+                    #Convert to an (internal) blueprint
                     rules = []
                     for name, value in zip(names, values):
-                        rules.append((name, value.typ, value.regex))
+                        rules.append((name, value))
                     blueprint = Blueprint(rules)
 
                 blueprint = blueprint.blueprint
@@ -130,37 +133,37 @@ class WSGI:
                 if request.mimetype == "application/x-www-form-urlencoded":
                     target = request.form
                 elif request.mimetype == "multipart/form":
-                        target = request.form
+                    target = request.form
                 elif request.mimetype == "application/json":
-                        target = request.json
+                    target = request.json
                 else:
-                    target = None 
+                    rsp = Response('<h1>This mimetype is unsupported.</h1>')
+                    rsp.headers['Content-Type'] = 'application/json'
+                    return rsp(environ, start_response)
+                if target == None:
+                    #This should be unreachable, it can't be None
+                    return
+
                 for rule in blueprint:
                     name = rule[0]
-                    targetType = rule[1]
-                    try:
-                        if not name in list(target.keys()):
-                            if request.mimetype == "application/json":
-                                rsp = Response('{"status_code":"400", "error":"The route requires a '+ name + ' but it was not found"}')
-                                rsp.headers['Content-Type'] = 'application/json'
-                                return rsp(environ, start_response)
-                            else:
-                                rsp = Response(f"<h1>400 Bad Request</h1><p>The route requires a {name} but it was not found</p>")
-                                rsp.headers['Content-Type'] = 'text/html'
-                                return rsp(environ, start_response)
-                    except:
-                        rsp = Response(f"<h1>400 Bad Request</h1><p>The route requires a {name} but it was not found</p>")
-                        rsp.headers['Content-Type'] = 'text/html'
-                        return rsp(environ, start_response)
-
+                    targetType = rule[1].typ
+                    
+                    #check to see if all the keys are present
                     try:
                         value = target[name]
                     except:
                         rsp = Response(f"<h1>400 Bad Request</h1><p>The route requires a {name} but it was not found</p>")
+                        if request.mimetype == "aplication/json":
+                            rsp = Response('{"status_code":"400", "error":"The route requires a '+ name + ' but it was not found"}')
                         rsp.headers['Content-Type'] = 'text/html'
                         return rsp(environ, start_response)
 
-                    clientType = type(value)
+                    #check to see if all the values are the right type
+                    try:
+                        clientType = int(value)
+                        clientType = type(clientType)
+                    except:
+                        clientType = type(value)
                     if not clientType == targetType:
                         if request.mimetype == "application/json":
                             rsp = Response('{"status_code":"400", "error":"The route requires a the ' + name + ' parameter to be the data type ' + str(targetType) + ' but the ' + str(clientType) + ' type was provided"}')                                
@@ -169,21 +172,45 @@ class WSGI:
                             rsp = Response(f"<h1>400 Bad Request</h1><p>The route requires a the {name} parameter to be the data type {targetType} but the {clientType} type was provided</p>")
                             rsp.headers['Content-Type'] = 'text/html'
                         return rsp(environ, start_response)
+
+                    #Check the min/max requirements
+                    min = rule[1].min
+                    max = rule[1].max
+                    if not min == None:
+                        if len(str(value)) < min:
+                            if request.mimetype == "application/json":
+                                rsp = Response('{"status_code":"400", "error":"The route requires the ' + name + ' parameter to have a minimum of ' + str(min) + ' letters' + '}')                                
+                                rsp.headers['Content-Type'] = 'application/json'
+                            else:
+                                rsp = Response('<h1>The route requires the ' + name + ' parameter to have a minimum of ' + str(min) + ' letters</h1>')
+                                rsp.headers['Content-Type'] = 'text/html'
+                            return rsp(environ, start_response)
+                    if not max == None:
+                        if len(str(value)) > max:
+                            if request.mimetype == "application/json":
+                                rsp = Response('{"status_code":"400", "error":"The route requires the ' + name + ' parameter to have a maximum of ' + str(max) + ' letters' + '}')                                
+                                rsp.headers['Content-Type'] = 'application/json'
+                            else:
+                                rsp = Response('<h1>The route requires the ' + name + ' parameter to have a maximum of ' + str(max) + ' letters</h1>')
+                                rsp.headers['Content-Type'] = 'text/html'
+                            return rsp(environ, start_response)
+
+                    #Check the regex's
                     regex = "."
-                    if len(rule) == 3:
-                        regex = rule[2] 
+                    if not rule[1].regex == None:
+                        regex = rule[1].regex
                     if not re.search(regex, str(value)):
                         if request.mimetype == "application/json":
-                            rsp = Response('{"status_code":"400", "error":"The route requires a the ' + name + ' parameter to follow this regex: ' + str(regex) + '}')                                
+                            rsp = Response('{"status_code":"400", "error":"The route requires the ' + name + ' parameter to follow this regex: ' + str(regex) + '}')                                
                             rsp.headers['Content-Type'] = 'application/json'
                         else:
-                            rsp = Response(f"<h1>400 Bad Request</h1><p>The route requires a the {name} parameter to follow this regex {str(regex)}</p>")
+                            rsp = Response(f"<h1>400 Bad Request</h1><p>The route requires the {name} parameter to follow this regex {str(regex)}</p>")
                             rsp.headers['Content-Type'] = 'text/html'
                         return rsp(environ, start_response)
 
-                rsp = controler.onRequest(request)
+                rsp = controler.onRequest(request, *list(params.values()))
             else:
-                rsp = controler.onRequest(Request(environ))
+                rsp = controler.onRequest(request, *list(params.values()))
             if not isinstance(rsp, Response):
                 rsp = Response(rsp) 
             return rsp(environ, start_response)
@@ -198,15 +225,19 @@ class WSGI:
         for route in self.Routes:
             rt = route.route()
             temp.append(rt)
-            if not rt.url[len(rt.url)-1] == "/":
-                self.map.connect(None, rt.url+"/", controler=rt)
-                self._secondary_map[str(rt)] = rt
+            if len(rt.url) == 1:
+                self.map.connect(None, rt.url, controler=rt)
+                self.secondary_map[str(rt)] = rt
+            elif rt.url[len(rt.url)-1] == "/":
+                rt.url = list(rt.url)
+                del rt.url[len(rt.url)-1]
+                rt.url = ''.join(rt.url)
+                self.map.connect(None, rt.url, controler=rt)
+                self.secondary_map[str(rt)] = rt
             else:
-                self.map.connect(None, rt.url[:len(rt.url)-1], controler=rt)
-                self._secondary_map[str(rt)] = rt
-                
-            self.map.connect(None, rt.url, controler=rt)
-            self._secondary_map[str(rt)] = rt
+                self.map.connect(None, rt.url, controler=rt)
+                self.secondary_map[str(rt)] = rt 
+
         self.Routes = temp
 
     def __call__(self, environ, start_response):
