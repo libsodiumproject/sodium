@@ -1,5 +1,7 @@
 from .wsgi import WSGI
 from functools import wraps
+import json
+import base64
 
 class Runtime:
     def __init__(self):
@@ -95,6 +97,14 @@ class Rule:
         self.min = kwargs.get("min")
         self.max = kwargs.get("max")
         
+class JWT:
+    def __init__(self, jwt) -> None:
+        self.jwt_original = jwt
+        try:
+            self.header = json.loads(base64.urlsafe_b64decode(jwt.split(".")[0]+"=="))
+            self.body = json.loads(base64.urlsafe_b64decode(jwt.split(".")[1]+"=="))
+        except Exception as e:
+            raise Exception(f"JWT could not be created due to issue with string, {e}")
 
 def useBlueprint(b, mimetypes):
     def decorator(aclass):
