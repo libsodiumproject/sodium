@@ -3,6 +3,7 @@ import re
 import base64
 from werkzeug.wrappers import Response, Request
 from routes import Mapper
+from .exceptions import HttpError
 
 class Route:
     def __init__(self, method, url, controler):
@@ -16,6 +17,16 @@ class WSGI:
         self.Config = {}
         self.map = Mapper()
         self.secondary_map = {}
+
+    def runControler(self, controler, request, params):
+        try:
+            rsp = controler.onRequest(request, *list(params.values()))
+        except HttpError as e:
+            rsp = Response(e.message)
+            rsp.headers["Content-Type"] = "text/html"
+            rsp.status_code = e.code
+        
+        return rsp
 
     def wsgi_handler(self, environ, start_response):
         path = environ.get('PATH_INFO')
@@ -95,7 +106,7 @@ class WSGI:
                                     return rsp(environ, start_response)
 
 
-                    rsp = controler.onRequest(request, *list(params.values()))
+                    rsp = self.runControler(controler, request, params)
                 else:
                     rsp = Response('{"error":"Invalid Jwt"}', status=403)
                     rsp.headers['Content-Type'] = "application/json"
@@ -208,9 +219,10 @@ class WSGI:
                             rsp.headers['Content-Type'] = 'text/html'
                         return rsp(environ, start_response)
 
-                rsp = controler.onRequest(request, *list(params.values()))
+                rsp = self.runControler(controler, request, params)
             else:
-                rsp = controler.onRequest(request, *list(params.values()))
+                rsp = self.runControler(controler, request, params)
+
             if not isinstance(rsp, Response):
                 rsp = Response(rsp) 
             return rsp(environ, start_response)

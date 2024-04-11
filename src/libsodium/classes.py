@@ -1,5 +1,6 @@
 from .wsgi import WSGI
 from functools import wraps
+from werkzeug import Response
 import json
 import base64
 
@@ -10,7 +11,7 @@ class Runtime:
         self.routes.append(route)
 
 class Route:
-    def __init__(self, method, url, controler):
+    def __init__(self, method: str, url: str, controler):
         self.method = method
         self.url = url
         self.controler = controler
@@ -98,7 +99,7 @@ class Rule:
         self.max = kwargs.get("max")
         
 class JWT:
-    def __init__(self, jwt) -> None:
+    def __init__(self, jwt: str) -> None:
         self.jwt_original = jwt
         try:
             self.header = json.loads(base64.urlsafe_b64decode(jwt.split(".")[0]+"=="))
