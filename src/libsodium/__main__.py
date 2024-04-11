@@ -406,11 +406,9 @@ if args[0] == "create":
             print("File: sodiumconfig.json is missing a 'blueprints' field. The default Blueprint location should be src/blueprints")
             exit()
         x = open(f"{blueprintLocations}/{name}Blueprint.py", 'w')
-        x.write(f"""from libsodium import Blueprint
-
-{name}Blueprint = Blueprint([
-('example',str)
-]) 
+        x.write(f"""from libsodium import Rule 
+class {name}Blueprint:
+    example_rule = Rule(str) 
 """)
     elif str(args[1]) == "model":
         if not len(args) == 3:

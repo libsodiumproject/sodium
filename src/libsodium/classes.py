@@ -1,10 +1,5 @@
-from datetime import datetime
-from datetime import timedelta
-from os import sync
 from .wsgi import WSGI
 from functools import wraps
-import typing as t
-
 
 class Runtime:
     def __init__(self):
@@ -85,19 +80,20 @@ In the sinario above it doesn't save alot of time, but as your requests get
 bigger, the benifits of blueprinting become clear.
 """
 class Blueprint:
-    def __init__(self, blueprint:list, **kwargs):
+    def __init__(self, blueprint:list):
         for i in blueprint:
-            if not isinstance(i, tuple) and not isinstance(i, list):
-                raise Exception("The blueprint provided had a rule that was not a tuple/array.")
-            if len(i) > 3:
-                print(i)
-                raise Exception("The blueprint provided contained a rule that had more than three elements.")
+            if not isinstance(i, tuple):
+                raise Exception("The blueprint provided had a rule that was not a tuple.")
+            if len(i) > 2:
+                raise Exception("The blueprint provided had a rule that contained too much info")
         self.blueprint = blueprint
 
 class Rule:
-    def __init__(self, typ, regex=".", **kwargs) -> None:
-        self.regex = regex
+    def __init__(self, typ, **kwargs) -> None:
         self.typ = typ
+        self.regex = kwargs.get("regex")
+        self.min = kwargs.get("min")
+        self.max = kwargs.get("max")
         
 
 def useBlueprint(b, mimetypes):
